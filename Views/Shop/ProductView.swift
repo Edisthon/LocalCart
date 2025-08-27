@@ -31,5 +31,9 @@ struct ProductView: View {
         .navigationTitle("Product Details")
     }
 }
-
+//struct ProductView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ProductView(product: <#T##Product#>)
+//    }
+//}
 
