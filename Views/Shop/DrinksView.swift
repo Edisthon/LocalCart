@@ -87,34 +87,88 @@ struct DrinksView: View {
         let product: Product
         
         var body: some View {
-            VStack(spacing: 20) {
-                Image(product.imageName)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 200, height: 200)
-                    .cornerRadius(12)
-                Text(product.name)
-                    .font(.largeTitle)
-                    .bold()
-                Text(product.description)
-                    .font(.title3)
-                    .foregroundColor(.gray)
-                Text("\(product.price, specifier: "%.2f") RWF")
-                    .font(.title2)
-                    .foregroundColor(.green)
-                Spacer()
-                NavigationLink(destination: PaymentView(product: product)) {
-                    Text("Proceed to Payment")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(Color.blue)
-                        .cornerRadius(10)
+            ScrollView {
+                VStack(spacing: 16) {
+                    Image(product.imageName)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 200, height: 200)
+                        .cornerRadius(12)
+                    Text(product.name)
+                        .font(.largeTitle)
+                        .bold()
+                    Text(product.description)
+                        .font(.title3)
+                        .foregroundColor(.gray)
+                        .multilineTextAlignment(.center)
                         .padding(.horizontal)
+                    Text("\(product.price, specifier: "%.2f") RWF")
+                        .font(.title2)
+                        .foregroundColor(.green)
+
+                    if product.calories != nil || product.servingSize != nil {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Nutrition")
+                                .font(.headline)
+                            if let calories = product.calories {
+                                Text("Calories: \(calories) kcal")
+                                    .font(.subheadline)
+                            }
+                            if let serving = product.servingSize {
+                                Text("Serving: \(serving)")
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding()
+                        .background(Color(.systemGray6))
+                        .cornerRadius(12)
+                    }
+
+                    if let ingredients = product.ingredients, !ingredients.isEmpty {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Ingredients")
+                                .font(.headline)
+                            ForEach(ingredients, id: \.self) { item in
+                                Text("• \(item)")
+                                    .font(.subheadline)
+                            }
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding()
+                        .background(Color(.systemGray6))
+                        .cornerRadius(12)
+                    }
+
+                    if let precautions = product.precautions, !precautions.isEmpty {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Precautions")
+                                .font(.headline)
+                            ForEach(precautions, id: \.self) { note in
+                                Text("• \(note)")
+                                    .font(.subheadline)
+                            }
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding()
+                        .background(Color(.systemGray6))
+                        .cornerRadius(12)
+                    }
+
+                    NavigationLink(destination: PaymentView(product: product)) {
+                        Text("Proceed to Payment")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                            .background(Color.blue)
+                            .cornerRadius(10)
+                            .padding(.horizontal)
+                    }
                 }
+                .padding()
             }
-            .padding()
             .navigationTitle(product.name)
         }
     }
