@@ -176,6 +176,8 @@ struct DrinksView: View {
         let product: Product
         @State private var isShowingPaymentOptions: Bool = false
         @State private var paymentStatusMessage: String? = nil
+        private enum PaymentMethod: String, Identifiable { case mtn = "MTN Mobile Money", airtel = "Airtel Mobile Money", paypal = "PayPal"; var id: String { rawValue } }
+        @State private var selectedPaymentMethod: PaymentMethod? = nil
         
         var body: some View {
             VStack(spacing: 20) {
@@ -206,12 +208,28 @@ struct DrinksView: View {
                         .padding(.horizontal)
                 }
                 .confirmationDialog("Choose Payment Method", isPresented: $isShowingPaymentOptions, titleVisibility: .visible) {
-                    Button("MTN Mobile Money") { startPayment(using: "MTN Mobile Money") }
-                    Button("Airtel Mobile Money") { startPayment(using: "Airtel Mobile Money") }
-                    Button("PayPal") { startPayment(using: "PayPal") }
+                    Button("MTN Mobile Money") { selectedPaymentMethod = .mtn }
+                    Button("Airtel Mobile Money") { selectedPaymentMethod = .airtel }
+                    Button("PayPal") { selectedPaymentMethod = .paypal }
                     Button("Cancel", role: .cancel) { }
                 } message: {
                     Text("Select how you would like to pay.")
+                }
+                .sheet(item: $selectedPaymentMethod) { method in
+                    switch method {
+                    case .mtn:
+                        MobileMoneyFormView(product: product, providerName: method.rawValue) { details in
+                            paymentStatusMessage = "Processing \(method.rawValue) for \(product.name) — \(details.summary)"
+                        }
+                    case .airtel:
+                        MobileMoneyFormView(product: product, providerName: method.rawValue) { details in
+                            paymentStatusMessage = "Processing \(method.rawValue) for \(product.name) — \(details.summary)"
+                        }
+                    case .paypal:
+                        PayPalFormView(product: product) { email in
+                            paymentStatusMessage = "Redirecting to PayPal for \(product.name) — Account: \(email)"
+                        }
+                    }
                 }
                 Spacer()
             }
@@ -223,6 +241,75 @@ struct DrinksView: View {
             // Implement your payment processing flow here
             // e.g., trigger SDK / API call based on `method`
         }
+    }
+
+    // Reuse the same forms from FoodView file by copying minimal definitions for this file scope
+    fileprivate struct MobileMoneyDetails {
+        let fullName: String
+        let phoneNumber: String
+        let location: String
+        let note: String
+        var summary: String { "\(fullName), \(phoneNumber), \(location)" }
+    }
+    fileprivate struct MobileMoneyFormView: View {
+        let product: Product
+        let providerName: String
+        var onConfirm: (MobileMoneyDetails) -> Void
+        @Environment(\.dismiss) private var dismiss
+        @State private var fullName: String = ""
+        @State private var phoneNumber: String = ""
+        @State private var locationText: String = ""
+        @State private var note: String = ""
+        @State private var isSubmitting: Bool = false
+        var body: some View {
+            NavigationStack {
+                Form {
+                    Section(header: Text(providerName)) {
+                        HStack { Text("Amount"); Spacer(); Text("\(product.price, specifier: "%.2f") RWF").foregroundColor(.secondary) }
+                    }
+                    Section(header: Text("Payer Information")) {
+                        TextField("Full name", text: $fullName)
+                        TextField("Phone number", text: $phoneNumber).keyboardType(.phonePad)
+                        TextField("Location (City/District)", text: $locationText)
+                        TextField("Note (optional)", text: $note)
+                    }
+                    Section {
+                        Button(action: submit) {
+                            if isSubmitting { ProgressView().frame(maxWidth: .infinity) } else { Text("Pay with \(providerName)").frame(maxWidth: .infinity) }
+                        }.disabled(!isValid)
+                    }
+                }
+                .navigationTitle("\(providerName)")
+                .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Close") { dismiss() } } }
+            }
+        }
+        private var isValid: Bool { !fullName.isEmpty && isValidPhone(phoneNumber) && !locationText.isEmpty }
+        private func isValidPhone(_ value: String) -> Bool { let d = value.filter { $0.isNumber }; return d.count >= 9 && d.count <= 12 }
+        private func submit() { isSubmitting = true; DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { isSubmitting = false; onConfirm(MobileMoneyDetails(fullName: fullName, phoneNumber: phoneNumber, location: locationText, note: note)); dismiss() } }
+    }
+    fileprivate struct PayPalFormView: View {
+        let product: Product
+        var onConfirm: (String) -> Void
+        @Environment(\.dismiss) private var dismiss
+        @State private var email: String = ""
+        @State private var password: String = ""
+        @State private var isSubmitting: Bool = false
+        var body: some View {
+            NavigationStack {
+                Form {
+                    Section(header: Text("PayPal")) { HStack { Text("Amount"); Spacer(); Text("\(product.price, specifier: "%.2f") RWF").foregroundColor(.secondary) } }
+                    Section(header: Text("Account")) {
+                        TextField("Email", text: $email).textInputAutocapitalization(.never).keyboardType(.emailAddress)
+                        SecureField("Password", text: $password)
+                    }
+                    Section { Button(action: submit) { if isSubmitting { ProgressView().frame(maxWidth: .infinity) } else { Text("Continue with PayPal").frame(maxWidth: .infinity) } }.disabled(!isValid) }
+                }
+                .navigationTitle("PayPal")
+                .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Close") { dismiss() } } }
+            }
+        }
+        private var isValid: Bool { email.contains("@") && email.contains(".") && password.count >= 6 }
+        private func submit() { isSubmitting = true; DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { isSubmitting = false; onConfirm(email); dismiss() } }
     }
 
 }
