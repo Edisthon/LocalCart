@@ -4,6 +4,14 @@ import FirebaseAuth
 import FirebaseFirestore
 import FirebaseStorage
 
+enum ListingCategory: String, CaseIterable, Codable, Hashable {
+    case food = "Food"
+    case drinks = "Drinks"
+    case interior = "Interior Designs"
+    case beauty = "Beauty & Accessories"
+    var displayName: String { rawValue }
+}
+
 struct Listing: Identifiable, Codable, Hashable {
     var id: String
     var userId: String
@@ -49,7 +57,7 @@ final class ProductStore: ObservableObject {
                        description: String,
                        price: Double,
                        location: String,
-                       category: Category,
+                       category: ListingCategory,
                        images: [UIImage]) async throws {
         guard let uid = Auth.auth().currentUser?.uid else { throw NSError(domain: "auth", code: 401, userInfo: [NSLocalizedDescriptionKey: "Not signed in"]) }
 
@@ -71,7 +79,7 @@ final class ProductStore: ObservableObject {
             "description": description,
             "price": price,
             "location": location,
-//            "category": category.displayName,
+            "category": category.displayName,
             "imageURLs": urls,
             "createdAt": FieldValue.serverTimestamp(),
             "sold": false
