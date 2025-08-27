@@ -25,7 +25,7 @@ struct WelcomeView: View {
                         .cornerRadius(10)
                 }
 
-                NavigationLink(destination: SellView()) {
+                NavigationLink(destination: SellTermsView()) {
                     Text("🧺 I want to sell")
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
