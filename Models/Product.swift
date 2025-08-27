@@ -144,9 +144,9 @@ let sampleProducts: [Product] = [
         description: "All-natural handmade soap with essential oils.",
         imageName: "beauty_soap",
         ingredients: ["Shea butter", "Olive oil", "Coconut oil", "Lavender oil"],
+        precautions: ["Patch test before first use", "Avoid contact with eyes"],
         materials: ["Plant oils"],
-        careInstructions: ["Keep dry between uses", "Store in a cool place"],
-        precautions: ["Patch test before first use", "Avoid contact with eyes"]
+        careInstructions: ["Keep dry between uses", "Store in a cool place"]
     ),
     Product(
         name: "Beaded Necklace",
@@ -155,8 +155,8 @@ let sampleProducts: [Product] = [
         description: "Handcrafted beaded necklace for a stylish look.",
         imageName: "beauty_necklace",
         materials: ["Glass beads", "Strong nylon thread"],
-        careInstructions: ["Avoid water exposure", "Store separately to prevent scratches"],
-        origin: "Made in Rwanda"
+        origin: "Made in Rwanda",
+        careInstructions: ["Avoid water exposure", "Store separately to prevent scratches"]
     ),
     Product(
         name: "Organic Lip Balm",
