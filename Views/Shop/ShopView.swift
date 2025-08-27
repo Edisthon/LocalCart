@@ -19,7 +19,7 @@ struct ShopView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
-            Text("🛒 Welcome to your Shop, \(username)")
+            Text("🛒 Welcome, \(username)")
                 .font(.largeTitle)
                 .bold()
 

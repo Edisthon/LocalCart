@@ -1,6 +1,9 @@
 import SwiftUI
+import FirebaseAuth
+import FirebaseFirestore
 
 struct SellerDashboardView: View {
+    @AppStorage("username") var username: String = "User"
     @StateObject private var store = ProductStore()
     var body: some View {
         ScrollView {
@@ -64,8 +67,8 @@ struct SellerDashboardView: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Hey, seller")
-                .font(.title)
+            Text("Hey, \(username)")
+                .font(.largeTitle)
                 .bold()
             Text("Manage your listings and sales")
                 .foregroundColor(.gray)
