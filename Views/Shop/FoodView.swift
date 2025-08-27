@@ -61,7 +61,7 @@ struct FoodView: View {
                                         Image(systemName: "bag")
                                             .font(.title3)
                                             .foregroundColor(.primary)
-                                        NavigationLink(destination: PaymentView(product: product)) {
+                                        NavigationLink(destination: ProductDetailView(product: product)) {
                                             Image(systemName: "bag.badge.plus")
                                                 .font(.title3)
                                                 .foregroundColor(.primary)

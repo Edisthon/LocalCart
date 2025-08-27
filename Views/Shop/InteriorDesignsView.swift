@@ -48,7 +48,7 @@ struct InteriorDesignsView: View {
                                         Image(systemName: "bag")
                                             .font(.title3)
                                             .foregroundColor(.primary)
-                                        NavigationLink(destination: PaymentView(product: product)) {
+                                        NavigationLink(destination: ProductDetailView(product: product)) {
                                             Image(systemName: "bag.badge.plus")
                                                 .font(.title3)
                                                 .foregroundColor(.primary)
@@ -158,10 +158,11 @@ struct InteriorDesignsView: View {
             paymentStatusMessage = "Processing \(method) for \(product.name)..."
         }
     }
-    struct InteriorDesigns_Previews: PreviewProvider {
-        static var previews: some View {
-            InteriorDesignsView()
-            
-        }
+}
+struct InteriorDesigns_Previews: PreviewProvider {
+    static var previews: some View {
+        InteriorDesignsView()
+        
     }
 }
+
