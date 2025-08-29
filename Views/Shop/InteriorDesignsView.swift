@@ -154,7 +154,7 @@ struct InteriorDesignsView: View {
                         }
                     }
                 }
-    //            .navigationTitle("Interior Designs")
+                .navigationTitle("Interior Designs")
             }
         }
         .onAppear { store.fetchInteriorListings() }
@@ -278,6 +278,7 @@ struct InteriorDesignsView: View {
     fileprivate struct MobileMoneyDetails { let fullName: String; let phoneNumber: String; let location: String; let note: String; var summary: String { "\(fullName), \(phoneNumber), \(location)" } }
     fileprivate struct MobileMoneyFormView: View {
         let product: Product; let providerName: String; var onConfirm: (MobileMoneyDetails) -> Void
+    @EnvironmentObject var store: ProductStore
         @Environment(\.dismiss) private var dismiss
         @State private var fullName: String = ""; @State private var phoneNumber: String = ""; @State private var locationText: String = ""; @State private var note: String = ""; @State private var isSubmitting: Bool = false
         var body: some View { NavigationStack { Form {
@@ -292,10 +293,11 @@ struct InteriorDesignsView: View {
         }.navigationTitle("\(providerName)").toolbar { ToolbarItem(placement: .cancellationAction) { Button("Close") { dismiss() } } } } }
         private var isValid: Bool { !fullName.isEmpty && isValidPhone(phoneNumber) && !locationText.isEmpty }
         private func isValidPhone(_ v: String) -> Bool { let d = v.filter { $0.isNumber }; return d.count >= 9 && d.count <= 12 }
-        private func submit() { isSubmitting = true; DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { isSubmitting = false; onConfirm(MobileMoneyDetails(fullName: fullName, phoneNumber: phoneNumber, location: locationText, note: note)); dismiss() } }
+    private func submit() { isSubmitting = true; store.markAsSold(listingID: product.id.uuidString); DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { isSubmitting = false; onConfirm(MobileMoneyDetails(fullName: fullName, phoneNumber: phoneNumber, location: locationText, note: note)); dismiss() } }
     }
     fileprivate struct PayPalFormView: View {
         let product: Product; var onConfirm: (String) -> Void
+    @EnvironmentObject var store: ProductStore
         @Environment(\.dismiss) private var dismiss
         @State private var email: String = ""; @State private var password: String = ""; @State private var isSubmitting: Bool = false
         var body: some View { NavigationStack { Form {
@@ -304,7 +306,7 @@ struct InteriorDesignsView: View {
             Section { Button(action: submit) { if isSubmitting { ProgressView().frame(maxWidth: .infinity) } else { Text("Continue with PayPal").frame(maxWidth: .infinity) } }.disabled(!isValid) }
         }.navigationTitle("PayPal").toolbar { ToolbarItem(placement: .cancellationAction) { Button("Close") { dismiss() } } } } }
         private var isValid: Bool { email.contains("@") && email.contains(".") && password.count >= 6 }
-        private func submit() { isSubmitting = true; DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { isSubmitting = false; onConfirm(email); dismiss() } }
+    private func submit() { isSubmitting = true; store.markAsSold(listingID: product.id.uuidString); DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { isSubmitting = false; onConfirm(email); dismiss() } }
     }
 }
 struct InteriorDesigns_Previews: PreviewProvider {

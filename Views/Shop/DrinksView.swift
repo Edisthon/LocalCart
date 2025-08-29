@@ -360,6 +360,7 @@ struct DrinksView: View {
         let product: Product
         let providerName: String
         var onConfirm: (MobileMoneyDetails) -> Void
+    @EnvironmentObject var store: ProductStore
         @Environment(\.dismiss) private var dismiss
         @State private var fullName: String = ""
         @State private var phoneNumber: String = ""
@@ -390,11 +391,12 @@ struct DrinksView: View {
         }
         private var isValid: Bool { !fullName.isEmpty && isValidPhone(phoneNumber) && !locationText.isEmpty }
         private func isValidPhone(_ value: String) -> Bool { let d = value.filter { $0.isNumber }; return d.count >= 9 && d.count <= 12 }
-        private func submit() { isSubmitting = true; DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { isSubmitting = false; onConfirm(MobileMoneyDetails(fullName: fullName, phoneNumber: phoneNumber, location: locationText, note: note)); dismiss() } }
+    private func submit() { isSubmitting = true; store.markAsSold(listingID: product.id.uuidString); DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { isSubmitting = false; onConfirm(MobileMoneyDetails(fullName: fullName, phoneNumber: phoneNumber, location: locationText, note: note)); dismiss() } }
     }
     fileprivate struct PayPalFormView: View {
         let product: Product
         var onConfirm: (String) -> Void
+    @EnvironmentObject var store: ProductStore
         @Environment(\.dismiss) private var dismiss
         @State private var email: String = ""
         @State private var password: String = ""
@@ -414,7 +416,7 @@ struct DrinksView: View {
             }
         }
         private var isValid: Bool { email.contains("@") && email.contains(".") && password.count >= 6 }
-        private func submit() { isSubmitting = true; DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { isSubmitting = false; onConfirm(email); dismiss() } }
+    private func submit() { isSubmitting = true; store.markAsSold(listingID: product.id.uuidString); DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { isSubmitting = false; onConfirm(email); dismiss() } }
     }
 
 }

@@ -23,6 +23,7 @@ struct Listing: Identifiable, Codable, Hashable {
     var imageURLs: [String]
     var createdAt: Date
     var sold: Bool
+    var approved: Bool
 }
 
 final class ProductStore: ObservableObject {
@@ -129,8 +130,20 @@ final class ProductStore: ObservableObject {
         }
     }
 
+    func markAsSold(listingID: String) {
+        db.collection("listings").document(listingID).updateData(["sold": true])
+    }
+
+    func approveSale(listingID: String) {
+        db.collection("listings").document(listingID).updateData(["approved": true])
+    }
+
     var earnings: Double {
-        userListings.filter { $0.sold }.reduce(0) { $0 + $1.price }
+        userListings.filter { $0.approved }.reduce(0) { $0 + $1.price }
+    }
+
+    var itemsSold: Int {
+        userListings.filter { $0.approved }.count
     }
 
     private static func mapListing(_ doc: QueryDocumentSnapshot) -> Listing? {
@@ -147,6 +160,8 @@ final class ProductStore: ObservableObject {
         let createdAt: Date
         if let ts = data["createdAt"] as? Timestamp { createdAt = ts.dateValue() } else { createdAt = Date() }
 
+        let approved = data["approved"] as? Bool ?? false
+
         return Listing(id: doc.documentID,
                        userId: userId,
                        name: name,
@@ -156,7 +171,8 @@ final class ProductStore: ObservableObject {
                        category: category,
                        imageURLs: imageURLs,
                        createdAt: createdAt,
-                       sold: sold)
+                       sold: sold,
+                       approved: approved)
     }
 }
 

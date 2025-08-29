@@ -402,6 +402,7 @@ fileprivate struct MobileMoneyFormView: View {
     let product: Product
     let providerName: String
     var onConfirm: (MobileMoneyDetails) -> Void
+    @EnvironmentObject var store: ProductStore
     @Environment(\.dismiss) private var dismiss
     @State private var fullName: String = ""
     @State private var phoneNumber: String = ""
@@ -456,6 +457,7 @@ fileprivate struct MobileMoneyFormView: View {
     }
     private func submit() {
         isSubmitting = true
+        store.markAsSold(listingID: product.id.uuidString)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
             isSubmitting = false
             onConfirm(MobileMoneyDetails(fullName: fullName, phoneNumber: phoneNumber, location: locationText, note: note))
@@ -468,6 +470,7 @@ fileprivate struct MobileMoneyFormView: View {
 fileprivate struct PayPalFormView: View {
     let product: Product
     var onConfirm: (String) -> Void
+    @EnvironmentObject var store: ProductStore
     @Environment(\.dismiss) private var dismiss
     @State private var email: String = ""
     @State private var password: String = ""
@@ -515,6 +518,7 @@ fileprivate struct PayPalFormView: View {
     }
     private func submit() {
         isSubmitting = true
+        store.markAsSold(listingID: product.id.uuidString)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
             isSubmitting = false
             onConfirm(email)
