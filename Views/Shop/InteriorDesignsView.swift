@@ -131,8 +131,10 @@ struct InteriorDesignsView: View {
             }
 //            .navigationTitle("Interior Designs")
         }
+        .onAppear { store.fetchInteriorListings() }
+        
     }
-    .onAppear { store.fetchInteriorListings() }
+
     
     struct ProductDetailView: View {
         let product: Product
@@ -169,7 +171,7 @@ struct InteriorDesignsView: View {
             .navigationTitle(product.name)
         }
     }
-    .onAppear { store.fetchInteriorListings() }
+    
     struct PaymentView: View {
         let product: Product
         @State private var isShowingPaymentOptions: Bool = false
