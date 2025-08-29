@@ -26,7 +26,7 @@ struct WelcomeHomePageView: View {
                         .scaledToFit()
                         .frame(width: 300, height: 300)
                         .padding()
-                    
+
                     NavigationLink(destination: LoginView()) {
                         Text("Welcome to RiseLocal, click to proceed")
                             .font(.title2)

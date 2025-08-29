@@ -14,7 +14,7 @@ private func locationForProduct(_ product: Product) -> String {
 }
 
 struct FoodView: View {
-    @StateObject private var store = ProductStore()
+    @EnvironmentObject var store: ProductStore
     
     // Map a Firestore listing into a placeholder Product for detail/payment flows
     private func productFromListing(_ listing: Listing) -> Product {
@@ -102,7 +102,6 @@ struct FoodView: View {
                                 }
                                 .frame(maxWidth: .infinity, alignment: .topLeading)
                                 .frame(height: 270, alignment: .top) // make all cards equal height like Chocolate/Beef Stew
-
                             }
                             // User Listings appended
                             ForEach(store.foodListings) { listing in

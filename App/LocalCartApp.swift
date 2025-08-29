@@ -3,7 +3,7 @@ import Firebase
 
 @main
 struct LocalCartApp: App {
-     
+    @StateObject private var store = ProductStore()
     
     init() {
         FirebaseApp.configure()
@@ -13,6 +13,7 @@ struct LocalCartApp: App {
     var body: some Scene {
         WindowGroup {
             WelcomeHomePageView()
-                
-        }	    }
+                .environmentObject(store)
+        }
+    }
 }

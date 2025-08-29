@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct InteriorDesignsView: View {
-    @StateObject private var store = ProductStore()
+    @EnvironmentObject var store: ProductStore
     private func productFromListing(_ listing: Listing) -> Product {
         Product(name: listing.name,
                 price: listing.price,
