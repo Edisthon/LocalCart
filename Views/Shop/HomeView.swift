@@ -16,37 +16,29 @@ let localCartProducts: [LocalCartProduct] = [
 struct HomeView: View {
     var body: some View {
         NavigationView {
-            ZStack {
-                Theme.background
-                    .ignoresSafeArea()
-                VStack(alignment: .leading, spacing: 15) {
-                    Text("Welcome to LocalCart 👋")
-                        .font(.largeTitle)
-                        .bold()
-                        .padding(.bottom)
-                        .foregroundColor(Theme.text)
+            VStack(alignment: .leading, spacing: 15) {
+                Text("Welcome to LocalCart 👋")
+                    .font(.largeTitle)
+                    .bold()
+                    .padding(.bottom)
 
-                    List(localCartProducts) { product in
-                        HStack {
-                            Image(systemName: "bag.fill")
-                                .foregroundColor(Theme.button)
-                            VStack(alignment: .leading) {
-                                Text(product.name)
-                                    .bold()
-                                    .foregroundColor(Theme.text)
-                                Text("$\(product.price, specifier: "%.2f")")
-                                    .font(.subheadline)
-                                    .foregroundColor(Theme.text.opacity(0.7))
-                            }
+                List(localCartProducts) { product in
+                    HStack {
+                        Image(systemName: "bag.fill")
+                            .foregroundColor(.green)
+                        VStack(alignment: .leading) {
+                            Text(product.name)
+                                .bold()
+                            Text("$\(product.price, specifier: "%.2f")")
+                                .font(.subheadline)
+                                .foregroundColor(.gray)
                         }
-                        .listRowBackground(Theme.background)
                     }
-                    .listStyle(PlainListStyle())  // Customize list style
-                    .background(Theme.background)
                 }
-                .padding()
-                .navigationTitle("Home")
+                .listStyle(PlainListStyle())  // Customize list style
             }
+            .padding()
+            .navigationTitle("Home")
         }
     }
 }

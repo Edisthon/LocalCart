@@ -119,6 +119,17 @@ final class ProductStore: ObservableObject {
         ])
     }
 
+    func deleteListing(listingID: String) {
+        db.collection("listings").document(listingID).delete { [weak self] error in
+            if let error = error {
+                print("Error removing document: \(error)")
+            } else {
+                print("Document successfully removed!")
+                self?.userListings.removeAll { $0.id == listingID }
+            }
+        }
+    }
+
     var earnings: Double {
         userListings.filter { $0.sold }.reduce(0) { $0 + $1.price }
     }
