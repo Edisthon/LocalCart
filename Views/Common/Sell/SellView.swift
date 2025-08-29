@@ -20,13 +20,10 @@ struct SellView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
-                Text("Upload items(Max \(maxPhotos) pictures)")
+                Text("Upload items")
                     .font(.title)
                     .bold()
                     .frame(maxWidth: .infinity, alignment: .center)
-
-                // Image grid and picker
-                imagesSection
 
                 labeledField(title: "Item Name") {
                     TextField("e.g. Air Jordan 1", text: $productName)
@@ -88,36 +85,36 @@ struct SellView: View {
         .navigationTitle("Sell")
     }
 
-    private var imagesSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            // Selected images grid
-            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-                ForEach(selectedImages.indices, id: \.self) { index in
-                    Image(uiImage: selectedImages[index])
-                        .resizable()
-                        .scaledToFill()
-                        .frame(height: 160)
-                        .clipped()
-                        .cornerRadius(8)
-                }
-            }
-
-            PhotosPicker(selection: $selectedPhotoItems, maxSelectionCount: maxPhotos, matching: .images) {
-                HStack {
-                    Image(systemName: "arrow.up.circle.fill")
-                        .font(.title)
-                        .foregroundColor(.blue)
-                    Text(selectedImages.isEmpty ? "Select photos" : "Add/Change photos")
-                        .foregroundColor(.blue)
-                    Spacer()
-                }
-                .padding(.vertical, 6)
-            }
-            .onChange(of: selectedPhotoItems) { newItems in
-                loadSelectedImages(from: newItems)
-            }
-        }
-    }
+//    private var imagesSection: some View {
+//        VStack(alignment: .leading, spacing: 12) {
+//            // Selected images grid
+//            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+//                ForEach(selectedImages.indices, id: \.self) { index in
+//                    Image(uiImage: selectedImages[index])
+//                        .resizable()
+//                        .scaledToFill()
+//                        .frame(height: 160)
+//                        .clipped()
+//                        .cornerRadius(8)
+//                }
+//            }
+//
+//            PhotosPicker(selection: $selectedPhotoItems, maxSelectionCount: maxPhotos, matching: .images) {
+//                HStack {
+//                    Image(systemName: "arrow.up.circle.fill")
+//                        .font(.title)
+//                        .foregroundColor(.blue)
+//                    Text(selectedImages.isEmpty ? "Select photos" : "Add/Change photos")
+//                        .foregroundColor(.blue)
+//                    Spacer()
+//                }
+//                .padding(.vertical, 6)
+//            }
+//            .onChange(of: selectedPhotoItems) { newItems in
+//                loadSelectedImages(from: newItems)
+//            }
+//        }
+//    }
 
     private func labeledField<Content: View>(title: String, @ViewBuilder content: () -> Content) -> some View {
         VStack(alignment: .leading, spacing: 8) {
