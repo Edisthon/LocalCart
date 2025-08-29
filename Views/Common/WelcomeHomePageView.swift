@@ -11,34 +11,39 @@ import SwiftUI
 struct WelcomeHomePageView: View {
     var body: some View {
         NavigationStack {
-            VStack(spacing: 20) {
-                Text("Welcome to LocalCart")
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-                    .padding(.top, 50)
+            ZStack {
+                Theme.background
+                    .ignoresSafeArea()
+                VStack(spacing: 20) {
+                    Text("Welcome to LocalCart")
+                        .font(.largeTitle)
+                        .fontWeight(.bold)
+                        .padding(.top, 50)
+                        .foregroundColor(Theme.text)
 
-                Image("welcomeImg")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 300, height: 300)
-                    .padding()
-
-                NavigationLink(destination: LoginView()) {
-                    Text("Welcome to RiseLocal, click to proceed")
-                        .font(.title2)
-                        .fontWeight(.semibold)
+                    Image("welcomeImg")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 300, height: 300)
                         .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(Color.blue)
-                        .foregroundColor(.white)
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
-                        .padding(.horizontal, 40)
+
+                    NavigationLink(destination: LoginView()) {
+                        Text("Welcome to RiseLocal, click to proceed")
+                            .font(.title2)
+                            .fontWeight(.semibold)
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                            .background(Theme.button)
+                            .foregroundColor(Theme.buttonText)
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                            .padding(.horizontal, 40)
+                    }
+
+
+                    Spacer()
                 }
-
-
-                Spacer()
+                .padding()
             }
-            .padding()
         }
     }
 }

@@ -34,6 +34,5 @@ struct ManageProductsView: View {
 struct ManageProductsView_Previews: PreviewProvider {
     static var previews: some View {
         ManageProductsView()
-            .environmentObject(ProductStore())
     }
 }
