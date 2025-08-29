@@ -7,6 +7,8 @@ struct ShopView: View {
     @State private var showEditProfile: Bool = false
     @State private var isLoading: Bool = false
     @State private var errorMessage: String? = nil
+    @State private var searchText: String = ""
+    @State private var showPersonalize: Bool = false
     // Profile fields
     @State private var firstName: String = ""
     @State private var lastName: String = ""
@@ -18,63 +20,126 @@ struct ShopView: View {
     @State private var selectedCategories: Set<String> = []
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
-            Text("🛒 Welcome, \(username)")
-                .font(.largeTitle)
-                .bold()
+        ScrollView {
+            VStack(alignment: .leading, spacing: 20) {
+                // Header with profile button
+                HStack(alignment: .firstTextBaseline) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Hello, \(username)")
+                            .font(.title)
+                            .bold()
+                        Text("Discover local products near you")
+                            .font(.subheadline)
+                            .foregroundColor(.gray)
+                    }
+                    Spacer()
+                    Button(action: { showEditProfile = true }) {
+                        Image(systemName: "person.crop.circle")
+                            .font(.title2)
+                            .foregroundColor(.blue)
+                    }
+                }
 
-            Text("Personalize your interest and start browsing!")
-                .font(.subheadline)
-                .foregroundColor(.gray)
+                // Search
+                HStack(spacing: 8) {
+                    Image(systemName: "magnifyingglass").foregroundColor(.gray)
+                    TextField("Search products, categories...", text: $searchText)
+                }
+                .padding()
+                .background(Color(.systemGray6))
+                .cornerRadius(12)
 
-            Button(action: { showEditProfile = true }) {
-                Text("Edit Profile")
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
-                    .background(Color.blue)
-                    .cornerRadius(8)
-            }
+                // Hero banner
+                ZStack(alignment: .bottomLeading) {
+                    Image("buydashboard")
+                        .resizable()
+                        .scaledToFill()
+                        .frame(height: 160)
+                        .clipped()
+                        .cornerRadius(14)
+                    LinearGradient(colors: [Color.black.opacity(0.0), Color.black.opacity(0.45)], startPoint: .top, endPoint: .bottom)
+                        .cornerRadius(14)
 
-            Spacer()
-
-            // Categories Section
-            VStack(alignment: .leading, spacing: 12) {
-                Text("Personalize your interest:")
-                    .font(.title2)
-                    .bold()
-
-                // Categories buttons
-                VStack(spacing: 16) {
-                    // Interests toggles
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("Your interests")
+                    NavigationLink(destination: SupportPayPalView()) {
+                        Text("Support Local • Shop Smart")
                             .font(.headline)
-                        ForEach(allCategories, id: \.self) { category in
-                            Toggle(isOn: Binding(get: { selectedCategories.contains(category) }, set: { on in
-                                if on { selectedCategories.insert(category) } else { selectedCategories.remove(category) }
-                            })) {
-                                Text(category)
+                            .foregroundColor(.white)
+                            .padding()
+                    }
+                }
+
+                // Categories chips
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Categories").font(.headline)
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 10) {
+                            NavigationLink(destination: FoodView()) { CategoryChip(title: "Food", systemImage: "fork.knife") }
+                            NavigationLink(destination: DrinksView()) { CategoryChip(title: "Drinks", systemImage: "cup.and.saucer") }
+                            NavigationLink(destination: InteriorDesignsView()) { CategoryChip(title: "Interior", systemImage: "lamp.table") }
+                            NavigationLink(destination: BeautyAccessoriesView()) { CategoryChip(title: "Beauty", systemImage: "sparkles") }
+                        }
+                    }
+                }
+
+                // Trending
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Trending now").font(.headline)
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 12) {
+                            ForEach(sampleProducts.prefix(4)) { product in
+                                NavigationLink(destination: ProductDetailView(product: product)) {
+                                    ProductCard(product: product)
+                                }
                             }
                         }
-                        Button(action: { Task { await saveInterests() } }) {
-                            if isLoading { ProgressView() } else { Text("Save interests") }
-                        }
-                        .disabled(selectedCategories.isEmpty)
                     }
-
-                    // Quick nav buttons
-                    NavigationLink(destination: FoodView()) { CategoryButton(category: "Food") }
-                    NavigationLink(destination: DrinksView()) { CategoryButton(category: "Drinks") }
-                    NavigationLink(destination: InteriorDesignsView()) { CategoryButton(category: "Interior Designs") }
-                    NavigationLink(destination: BeautyAccessoriesView()) { CategoryButton(category: "Beauty & Accessories") }
                 }
-                .padding(.top)
-            }
 
-            Spacer()
+                // Recommended
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Recommended for you").font(.headline)
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 12) {
+                            let recs = recommendedProducts()
+                            ForEach(recs) { product in
+                                NavigationLink(destination: ProductDetailView(product: product)) {
+                                    ProductCard(product: product)
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Personalize collapsible
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Text("Personalize your interests").font(.headline)
+                        Spacer()
+                        Button(action: { withAnimation { showPersonalize.toggle() } }) {
+                            Image(systemName: showPersonalize ? "chevron.up" : "chevron.down").foregroundColor(.blue)
+                        }
+                    }
+                    if showPersonalize {
+                        VStack(alignment: .leading, spacing: 8) {
+                            ForEach(allCategories, id: \.self) { category in
+                                Toggle(isOn: Binding(get: { selectedCategories.contains(category) }, set: { on in
+                                    if on { selectedCategories.insert(category) } else { selectedCategories.remove(category) }
+                                })) {
+                                    Text(category)
+                                }
+                            }
+                            Button(action: { Task { await saveInterests() } }) {
+                                if isLoading { ProgressView() } else { Text("Save interests") }
+                            }
+                            .disabled(selectedCategories.isEmpty)
+                            .padding(.top, 4)
+                        }
+                    }
+                }
+
+            }
+            .padding()
         }
-        .padding()
         .navigationTitle("Shop")
         .sheet(isPresented: $showEditProfile) {
             EditProfileView(firstName: $firstName, lastName: $lastName, email: $email, phoneNumber: $phoneNumber, locationText: $locationText, onSave: {
@@ -97,6 +162,81 @@ struct CategoryButton: View {
             .background(Color.purple)
             .cornerRadius(10)
     }
+}
+
+// MARK: - Dashboard Components
+private struct CategoryChip: View {
+    let title: String
+    let systemImage: String
+    var body: some View {
+        HStack(spacing: 6) {
+            Image(systemName: systemImage)
+                .font(.subheadline)
+            Text(title)
+                .font(.subheadline)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(Color.blue.opacity(0.12))
+        .foregroundColor(.blue)
+        .cornerRadius(16)
+    }
+}
+
+private struct ProductCards: View {
+    let product: Product
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Image(product.imageName)
+                .resizable()
+                .scaledToFill()
+                .frame(width: 140, height: 100)
+                .clipped()
+                .cornerRadius(10)
+            Text(product.name)
+                .font(.subheadline)
+                .lineLimit(1)
+            Text(String(format: "%.0f RWF", product.price))
+                .font(.caption)
+                .foregroundColor(.green)
+        }
+        .frame(width: 140)
+    }
+}
+
+// MARK: - Support via PayPal
+private struct SupportPayPalView: View {
+    @State private var email: String = ""
+    @State private var password: String = ""
+    @State private var isSubmitting: Bool = false
+    @Environment(\.dismiss) private var dismiss
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section(header: Text("Support via PayPal")) {
+                    Text("Thank you for supporting local makers! Enter your PayPal account to proceed.")
+                        .font(.footnote)
+                        .foregroundColor(.gray)
+                }
+                Section(header: Text("Account")) {
+                    TextField("Email", text: $email)
+                        .textInputAutocapitalization(.never)
+                        .keyboardType(.emailAddress)
+                    SecureField("Password", text: $password)
+                }
+                Section {
+                    Button(action: submit) {
+                        if isSubmitting { ProgressView().frame(maxWidth: .infinity) } else { Text("Continue with PayPal").frame(maxWidth: .infinity) }
+                    }
+                    .disabled(!isValid)
+                }
+            }
+            .navigationTitle("Support Local")
+            .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Close") { dismiss() } } }
+        }
+    }
+    private var isValid: Bool { email.contains("@") && email.contains(".") && password.count >= 6 }
+    private func submit() { isSubmitting = true; DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { isSubmitting = false; dismiss() } }
 }
 
 // MARK: - Edit Profile Sheet
@@ -130,6 +270,12 @@ private struct EditProfileView: View {
 
 // MARK: - Firestore helpers
 extension ShopView {
+    private func recommendedProducts() -> [Product] {
+        let selected = selectedCategories
+        let pool = selected.isEmpty ? sampleProducts : sampleProducts.filter { selected.contains($0.category) }
+        if searchText.isEmpty { return Array(pool.prefix(10)) }
+        return pool.filter { $0.name.localizedCaseInsensitiveContains(searchText) || $0.description.localizedCaseInsensitiveContains(searchText) }
+    }
     private func usersDoc() throws -> DocumentReference {
         guard let uid = Auth.auth().currentUser?.uid else { throw NSError(domain: "auth", code: 401, userInfo: [NSLocalizedDescriptionKey: "Not signed in"]) }
         return Firestore.firestore().collection("users").document(uid)
