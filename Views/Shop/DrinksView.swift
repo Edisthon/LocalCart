@@ -12,6 +12,7 @@ private func locationForProduct(_ product: Product) -> String {
 }
 
 struct DrinksView: View {
+    @StateObject private var store = ProductStore()
     
     var body: some View {
         NavigationStack {
@@ -77,9 +78,30 @@ struct DrinksView: View {
                     }
                     .padding()
                 }
+                if !store.drinksListings.isEmpty {
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("From Sellers")
+                            .font(.title2)
+                            .bold()
+                            .padding(.horizontal)
+                        ForEach(store.drinksListings) { listing in
+                            HStack(spacing: 12) {
+                                Rectangle().fill(Color.gray.opacity(0.2)).frame(width: 80, height: 80).cornerRadius(8)
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(listing.name).bold()
+                                    Text(String(format: "%.0f RWF", listing.price)).foregroundColor(.green)
+                                    Text(listing.location).font(.caption).foregroundColor(.gray)
+                                }
+                                Spacer()
+                            }
+                            .padding(.horizontal)
+                        }
+                    }
+                }
             }
             .navigationTitle("Drinks")
         }
+        .onAppear { store.fetchDrinksListings() }
     }
     
     

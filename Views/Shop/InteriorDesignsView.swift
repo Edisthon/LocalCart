@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct InteriorDesignsView: View {
+    @StateObject private var store = ProductStore()
     
     var body: some View {
         NavigationStack {
@@ -66,6 +67,26 @@ struct InteriorDesignsView: View {
                     }
                     .padding()
                 }
+                if !store.interiorListings.isEmpty {
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("From Sellers")
+                            .font(.title2)
+                            .bold()
+                            .padding(.horizontal)
+                        ForEach(store.interiorListings) { listing in
+                            HStack(spacing: 12) {
+                                Rectangle().fill(Color.gray.opacity(0.2)).frame(width: 80, height: 80).cornerRadius(8)
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(listing.name).bold()
+                                    Text(String(format: "%.0f RWF", listing.price)).foregroundColor(.green)
+                                    Text(listing.location).font(.caption).foregroundColor(.gray)
+                                }
+                                Spacer()
+                            }
+                            .padding(.horizontal)
+                        }
+                    }
+                }
             }
 //            .navigationTitle("Interior Designs")
         }
@@ -107,6 +128,7 @@ struct InteriorDesignsView: View {
             .navigationTitle(product.name)
         }
     }
+    .onAppear { store.fetchInteriorListings() }
     struct PaymentView: View {
         let product: Product
         @State private var isShowingPaymentOptions: Bool = false
