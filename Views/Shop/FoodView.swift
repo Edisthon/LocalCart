@@ -102,7 +102,6 @@ struct FoodView: View {
                                 }
                                 .frame(maxWidth: .infinity, alignment: .topLeading)
                                 .frame(height: 270, alignment: .top) // make all cards equal height like Chocolate/Beef Stew
-
                             }
                             // User Listings appended
                             ForEach(store.foodListings) { listing in
