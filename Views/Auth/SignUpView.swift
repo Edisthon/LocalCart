@@ -15,83 +15,78 @@ struct SignUpView: View {
 
     var body: some View {
         NavigationView {
-            ZStack {
-                Theme.background
-                    .ignoresSafeArea()
-                VStack(spacing: 20) {
-                    Image("AppLogo")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 120, height: 120)
-                        .padding(.top)
-                    Text("Create an Account")
-                        .font(.title)
-                        .bold()
-                        .padding(.top)
-                        .foregroundColor(Theme.text)
+            VStack(spacing: 20) {
+                Image("AppLogo")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 120, height: 120)
+                    .padding(.top)
+                Text("Create an Account")
+                    .font(.title)
+                    .bold()
+                    .padding(.top)
 
-                    TextField("First Name", text: $firstName)
-                        .padding()
-                        .background(Color.white.opacity(0.5))
-                        .cornerRadius(8)
+                TextField("First Name", text: $firstName)
+                    .padding()
+                    .background(Color(.secondarySystemBackground))
+                    .cornerRadius(8)
+                
+                TextField("Last Name", text: $lastName)
+                    .padding()
+                    .background(Color(.secondarySystemBackground))
+                    .cornerRadius(8)
 
-                    TextField("Last Name", text: $lastName)
-                        .padding()
-                        .background(Color.white.opacity(0.5))
-                        .cornerRadius(8)
+                TextField("Email Address", text: $email)
+                    .padding()
+                    .keyboardType(.emailAddress)
+                    .autocapitalization(.none)
+                    .background(Color(.secondarySystemBackground))
+                    .cornerRadius(8)
 
-                    TextField("Email Address", text: $email)
-                        .padding()
-                        .keyboardType(.emailAddress)
-                        .autocapitalization(.none)
-                        .background(Color.white.opacity(0.5))
-                        .cornerRadius(8)
-
-                    SecureField("Password", text: $password)
-                        .padding()
-                        .background(Color.white.opacity(0.5))
-                        .cornerRadius(8)
-
-                    NavigationLink(destination: LoginView()) {
-                        Text("Already have an account? Login")
-                            .font(.footnote)
-                            .foregroundColor(Theme.button)
-                            .frame(maxWidth: .infinity, alignment: .trailing)
-                    }
-
-                    // Hidden NavigationLink for programmatic navigation
-                    NavigationLink(destination: LoginView(), isActive: $navigateToLogin) {
-                        EmptyView()
-                    }
-
-                    Button(action: {
-                        if validateFields() {
-                            signUpUser(firstName: firstName, lastName: lastName, email: email, password: password)
-                        }
-                    }) {
-                        Text("Sign Up")
-                            .foregroundColor(Theme.buttonText)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Theme.button)
-                            .cornerRadius(8)
-                    }
-
-                    Spacer()
+                SecureField("Password", text: $password)
+                    .padding()
+                    .background(Color(.secondarySystemBackground))
+                    .cornerRadius(8)
+                
+                NavigationLink(destination: LoginView()) {
+                    Text("Already have an account? Login")
+                        .font(.footnote)
+                        .foregroundColor(.blue)
+                        .frame(maxWidth: .infinity, alignment: .trailing)
                 }
-                .padding()
-                .navigationTitle("Sign Up")
-                .alert(isPresented: $showAlert) {
-                    Alert(
-                        title: Text("Sign Up"),
-                        message: Text(alertMessage),
-                        dismissButton: .default(Text("OK")) {
-                            if alertMessage == "Account created successfully!" {
-                                navigateToLogin = true // Trigger navigation after alert dismissal
-                            }
-                        }
-                    )
+                
+                // Hidden NavigationLink for programmatic navigation
+                NavigationLink(destination: LoginView(), isActive: $navigateToLogin) {
+                    EmptyView()
                 }
+                
+                Button(action: {
+                    if validateFields() {
+                        signUpUser(firstName: firstName, lastName: lastName, email: email, password: password)
+                    }
+                }) {
+                    Text("Sign Up")
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.green)
+                        .cornerRadius(8)
+                }
+
+                Spacer()
+            }
+            .padding()
+            .navigationTitle("Sign Up")
+            .alert(isPresented: $showAlert) {
+                Alert(
+                    title: Text("Sign Up"),
+                    message: Text(alertMessage),
+                    dismissButton: .default(Text("OK")) {
+                        if alertMessage == "Account created successfully!" {
+                            navigateToLogin = true // Trigger navigation after alert dismissal
+                        }
+                    }
+                )
             }
         }
     }
