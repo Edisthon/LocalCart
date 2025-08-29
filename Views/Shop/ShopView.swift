@@ -59,18 +59,13 @@ struct ShopView: View {
                         .cornerRadius(14)
                     LinearGradient(colors: [Color.black.opacity(0.0), Color.black.opacity(0.45)], startPoint: .top, endPoint: .bottom)
                         .cornerRadius(14)
-//                    Text("Support Local • Shop Smart")
-//                        .font(.headline)
-//                        .foregroundColor(.white)
-//                        .padding()
-                    NavigationLink(destination: SellView()){
-                        
+
+                    NavigationLink(destination: SupportPayPalView()) {
                         Text("Support Local • Shop Smart")
                             .font(.headline)
                             .foregroundColor(.white)
                             .padding()
                     }
-                    
                 }
 
                 // Categories chips
@@ -207,6 +202,41 @@ private struct ProductCards: View {
         }
         .frame(width: 140)
     }
+}
+
+// MARK: - Support via PayPal
+private struct SupportPayPalView: View {
+    @State private var email: String = ""
+    @State private var password: String = ""
+    @State private var isSubmitting: Bool = false
+    @Environment(\.dismiss) private var dismiss
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section(header: Text("Support via PayPal")) {
+                    Text("Thank you for supporting local makers! Enter your PayPal account to proceed.")
+                        .font(.footnote)
+                        .foregroundColor(.gray)
+                }
+                Section(header: Text("Account")) {
+                    TextField("Email", text: $email)
+                        .textInputAutocapitalization(.never)
+                        .keyboardType(.emailAddress)
+                    SecureField("Password", text: $password)
+                }
+                Section {
+                    Button(action: submit) {
+                        if isSubmitting { ProgressView().frame(maxWidth: .infinity) } else { Text("Continue with PayPal").frame(maxWidth: .infinity) }
+                    }
+                    .disabled(!isValid)
+                }
+            }
+            .navigationTitle("Support Local")
+            .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Close") { dismiss() } } }
+        }
+    }
+    private var isValid: Bool { email.contains("@") && email.contains(".") && password.count >= 6 }
+    private func submit() { isSubmitting = true; DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { isSubmitting = false; dismiss() } }
 }
 
 // MARK: - Edit Profile Sheet
