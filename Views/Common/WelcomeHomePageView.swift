@@ -12,7 +12,7 @@ struct WelcomeHomePageView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Theme.background
+                LinearGradient(gradient: Gradient(colors: [Theme.background, Theme.beige]), startPoint: .top, endPoint: .bottom)
                     .ignoresSafeArea()
                 VStack(spacing: 20) {
                     Text("Welcome to LocalCart")
@@ -20,6 +20,10 @@ struct WelcomeHomePageView: View {
                         .fontWeight(.bold)
                         .padding(.top, 50)
                         .foregroundColor(Theme.text)
+
+                    Text("Your one-stop shop for local goods.")
+                        .font(.headline)
+                        .foregroundColor(Theme.text.opacity(0.7))
 
                     Image("welcomeImg")
                         .resizable()
@@ -36,6 +40,7 @@ struct WelcomeHomePageView: View {
                             .background(Theme.button)
                             .foregroundColor(Theme.buttonText)
                             .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .shadow(color: Color.black.opacity(0.2), radius: 10, x: 0, y: 5)
                             .padding(.horizontal, 40)
                     }
 
