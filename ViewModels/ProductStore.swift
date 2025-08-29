@@ -28,6 +28,9 @@ struct Listing: Identifiable, Codable, Hashable {
 final class ProductStore: ObservableObject {
     @Published var userListings: [Listing] = []
     @Published var foodListings: [Listing] = []
+    @Published var drinksListings: [Listing] = []
+    @Published var beautyListings: [Listing] = []
+    @Published var interiorListings: [Listing] = []
 
     private let db = Firestore.firestore()
     private let storage = Storage.storage()
@@ -45,11 +48,41 @@ final class ProductStore: ObservableObject {
 
     func fetchFoodListings() {
         db.collection("listings")
-//            .whereField("category", isEqualTo: Category.food.displayName)
+            .whereField("category", isEqualTo: ListingCategory.food.displayName)
             .order(by: "createdAt", descending: true)
             .addSnapshotListener { [weak self] snapshot, _ in
                 guard let documents = snapshot?.documents else { return }
                 self?.foodListings = documents.compactMap { Self.mapListing($0) }
+            }
+    }
+
+    func fetchDrinksListings() {
+        db.collection("listings")
+            .whereField("category", isEqualTo: ListingCategory.drinks.displayName)
+            .order(by: "createdAt", descending: true)
+            .addSnapshotListener { [weak self] snapshot, _ in
+                guard let documents = snapshot?.documents else { return }
+                self?.drinksListings = documents.compactMap { Self.mapListing($0) }
+            }
+    }
+
+    func fetchBeautyListings() {
+        db.collection("listings")
+            .whereField("category", isEqualTo: ListingCategory.beauty.displayName)
+            .order(by: "createdAt", descending: true)
+            .addSnapshotListener { [weak self] snapshot, _ in
+                guard let documents = snapshot?.documents else { return }
+                self?.beautyListings = documents.compactMap { Self.mapListing($0) }
+            }
+    }
+
+    func fetchInteriorListings() {
+        db.collection("listings")
+            .whereField("category", isEqualTo: ListingCategory.interior.displayName)
+            .order(by: "createdAt", descending: true)
+            .addSnapshotListener { [weak self] snapshot, _ in
+                guard let documents = snapshot?.documents else { return }
+                self?.interiorListings = documents.compactMap { Self.mapListing($0) }
             }
     }
 
