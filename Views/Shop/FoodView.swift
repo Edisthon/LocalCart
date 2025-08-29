@@ -16,6 +16,15 @@ private func locationForProduct(_ product: Product) -> String {
 struct FoodView: View {
     @StateObject private var store = ProductStore()
     
+    // Map a Firestore listing into a placeholder Product for detail/payment flows
+    private func productFromListing(_ listing: Listing) -> Product {
+        Product(name: listing.name,
+                price: listing.price,
+                category: "Food",
+                description: listing.description,
+                imageName: "food_pasta")
+    }
+    
     var body: some View {
         NavigationStack {
             VStack {
@@ -82,20 +91,61 @@ struct FoodView: View {
                 }
                 // User Listings appended
                 if !store.foodListings.isEmpty {
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("From Sellers")
-                            .font(.title2)
-                            .bold()
-                            .padding(.horizontal)
-                        LazyVGrid(columns: [GridItem(.flexible(), spacing: 16), GridItem(.flexible(), spacing: 16)], spacing: 16) {
-                            ForEach(store.foodListings) { listing in
-                                NavigationLink(destination: ListingDetailView(listing: listing)) {
-                                    ListingCard(listing: listing, placeholderSystemImage: "fork.knife")
+                    LazyVGrid(columns: [
+                        GridItem(.flexible(), spacing: 16),
+                        GridItem(.flexible(), spacing: 16)
+                    ], spacing: 16) {
+                        ForEach(store.foodListings) { listing in
+                            let placeholderProduct = productFromListing(listing)
+                            VStack(alignment: .leading, spacing: 10) {
+                                NavigationLink(destination: ProductDetailView(product: placeholderProduct)) {
+                                    Image(placeholderProduct.imageName)
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame( width: 180, height: 160)
+                                        .frame(maxWidth: .infinity)
+                                        .clipped()
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 12)
+                                                .stroke(Color(.systemGray4), lineWidth: 1)
+                                        )
+                                        .cornerRadius(12)
+                                        .shadow(color: Color.black.opacity(0.08), radius: 6, x: 0, y: 4)
                                 }
+                                HStack(alignment: .top) {
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text("Name: \(listing.name)")
+                                            .font(.subheadline)
+                                            .foregroundColor(.primary)
+                                        Text("Price: \(listing.price, specifier: "%.0f") frw")
+                                            .font(.footnote)
+                                            .foregroundColor(.secondary)
+                                        Text("Location: \(listing.location)")
+                                            .font(.footnote)
+                                            .foregroundColor(.secondary)
+                                    }
+                                    Spacer()
+                                    HStack(spacing: 10) {
+                                        Image(systemName: "bag")
+                                            .font(.title3)
+                                            .foregroundColor(.primary)
+                                        NavigationLink(destination: PaymentView(product: placeholderProduct)) {
+                                            Image(systemName: "bag.badge.plus")
+                                                .font(.title3)
+                                                .foregroundColor(.primary)
+                                        }
+                                    }
+                                }
+                                .padding(12)
+                                .frame(height: 90, alignment: .top)
+                                .background(Color(.systemGray6))
+                                .cornerRadius(12)
                             }
+                            .frame(maxWidth: .infinity, alignment: .topLeading)
+                            .frame(height: 270, alignment: .top)
                         }
-                        .padding(.horizontal)
                     }
+                    .padding()
                 }
             }
             .navigationTitle("Food")
