@@ -14,7 +14,8 @@ private func locationForProduct(_ product: Product) -> String {
 }
 
 struct FoodView: View {
-
+    @StateObject private var store = ProductStore()
+    
     var body: some View {
         NavigationStack {
             VStack {
@@ -79,9 +80,38 @@ struct FoodView: View {
                     }
                     .padding()
                 }
+                // User Listings appended
+                if !store.foodListings.isEmpty {
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("From Sellers")
+                            .font(.title2)
+                            .bold()
+                            .padding(.horizontal)
+                        ForEach(store.foodListings) { listing in
+                            HStack(spacing: 12) {
+                                Rectangle()
+                                    .fill(Color.gray.opacity(0.2))
+                                    .frame(width: 80, height: 80)
+                                    .cornerRadius(8)
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(listing.name).bold()
+                                    Text(String(format: "%.0f RWF", listing.price)).foregroundColor(.green)
+                                    Text(listing.location).font(.caption).foregroundColor(.gray)
+                                }
+                                Spacer()
+                                NavigationLink(destination: ProductDetailView(product: Product(name: listing.name, price: listing.price, category: "Food", description: listing.description, imageName: listing.imageURLs.first ?? "food_pasta"))) {
+                                    Image(systemName: "chevron.right")
+                                        .foregroundColor(.blue)
+                                }
+                            }
+                            .padding(.horizontal)
+                        }
+                    }
+                }
             }
             .navigationTitle("Food")
         }
+        .onAppear { store.fetchFoodListings() }
     }
 }
 
