@@ -59,6 +59,7 @@ struct ShopView: View {
                         .cornerRadius(14)
                     LinearGradient(colors: [Color.black.opacity(0.0), Color.black.opacity(0.45)], startPoint: .top, endPoint: .bottom)
                         .cornerRadius(14)
+
                     NavigationLink(destination: SupportPayPalView()) {
                         Text("Support Local • Shop Smart")
                             .font(.headline)
@@ -85,8 +86,8 @@ struct ShopView: View {
                     Text("Trending now").font(.headline)
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 12) {
-                            ForEach(sampleProducts.prefix(8)) { product in
-                                NavigationLink(destination: ProductView(product: product)) {
+                            ForEach(sampleProducts.prefix(4)) { product in
+                                NavigationLink(destination: ProductDetailView(product: product)) {
                                     ProductCard(product: product)
                                 }
                             }
@@ -101,7 +102,7 @@ struct ShopView: View {
                         HStack(spacing: 12) {
                             let recs = recommendedProducts()
                             ForEach(recs) { product in
-                                NavigationLink(destination: ProductView(product: product)) {
+                                NavigationLink(destination: ProductDetailView(product: product)) {
                                     ProductCard(product: product)
                                 }
                             }
@@ -182,7 +183,7 @@ private struct CategoryChip: View {
     }
 }
 
-private struct ProductCard: View {
+private struct ProductCards: View {
     let product: Product
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
