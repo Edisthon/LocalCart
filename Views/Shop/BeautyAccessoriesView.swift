@@ -12,22 +12,90 @@ struct BeautyAccessoriesView: View {
     
     var body: some View {
         NavigationStack {
-            VStack {
-                Text("Beauty Accessories Products")
-                    .font(.largeTitle)
-                    .bold()
-                    .padding()
-                
-                ScrollView {
-                    LazyVGrid(columns: [
-                        GridItem(.flexible(), spacing: 16),
-                        GridItem(.flexible(), spacing: 16)
-                    ], spacing: 16) {
-                        ForEach(sampleProducts.filter { $0.category == "Beauty & Accessories" }) { product in
+            ZStack {
+                Theme.background
+                    .ignoresSafeArea()
+                VStack {
+                    Text("Beauty Accessories Products")
+                        .font(.largeTitle)
+                        .bold()
+                        .padding()
+                        .foregroundColor(Theme.text)
+
+                    ScrollView {
+                        LazyVGrid(columns: [
+                            GridItem(.flexible(), spacing: 16),
+                            GridItem(.flexible(), spacing: 16)
+                        ], spacing: 16) {
+                            ForEach(sampleProducts.filter { $0.category == "Beauty & Accessories" }) { product in
+                                VStack(alignment: .leading, spacing: 10) {
+                                    NavigationLink(destination: ProductDetailView(product: product)) {
+                                        if !product.imageName.isEmpty {
+                                            Image(product.imageName)
+                                                .resizable()
+                                                .scaledToFill()
+                                                .frame(width: 180, height: 160)
+                                                .frame(maxWidth: .infinity)
+                                                .clipped()
+                                                .overlay(
+                                                    RoundedRectangle(cornerRadius: 12)
+                                                        .stroke(Color.white, lineWidth: 1)
+                                                )
+                                                .cornerRadius(12)
+                                                .shadow(color: Color.black.opacity(0.08), radius: 6, x: 0, y: 4)
+                                        } else {
+                                            Rectangle()
+                                                .fill(Theme.beige.opacity(0.2))
+                                                .frame(width: 180, height: 160)
+                                                .frame(maxWidth: .infinity)
+                                                .cornerRadius(12)
+                                                .overlay(
+                                                    Image(systemName: "photo")
+                                                        .font(.largeTitle)
+                                                        .foregroundColor(.gray)
+                                                )
+                                        }
+                                    }
+                                    HStack(alignment: .top) {
+                                        VStack(alignment: .leading, spacing: 4) {
+                                            Text("Name: \(product.name)")
+                                                .font(.subheadline)
+                                                .foregroundColor(Theme.text)
+                                            Text("Price: \(product.price, specifier: "%.0f") frw")
+                                                .font(.footnote)
+                                                .foregroundColor(Theme.text.opacity(0.7))
+                                            Text("Location: Kigali")
+                                                .font(.footnote)
+                                                .foregroundColor(Theme.text.opacity(0.7))
+                                        }
+                                        Spacer()
+                                        HStack(spacing: 10) {
+                                            Image(systemName: "bag")
+                                                .font(.title3)
+                                                .foregroundColor(Theme.button)
+                                            NavigationLink(destination: ProductDetailView(product: product)) {
+                                                Image(systemName: "bag.badge.plus")
+                                                    .font(.title3)
+                                                    .foregroundColor(Theme.button)
+                                            }
+                                        }
+                                    }
+                                    .padding(12)
+                                    .frame(height: 90, alignment: .top)
+                                    .background(Theme.beige)
+                                    .cornerRadius(12)
+                                }
+                                .frame(maxWidth: .infinity, alignment: .topLeading)
+                                .frame(height: 270, alignment: .top)
+                            }
+                        }
+                        .padding()
+                        ForEach(store.beautyListings) { listing in
+                            let placeholderProduct = productFromListing(listing)
                             VStack(alignment: .leading, spacing: 10) {
-                                NavigationLink(destination: ProductDetailView(product: product)) {
-                                    if !product.imageName.isEmpty {
-                                        Image(product.imageName)
+                                NavigationLink(destination: ProductDetailView(product: placeholderProduct)) {
+                                    if !placeholderProduct.imageName.isEmpty {
+                                        Image(placeholderProduct.imageName)
                                             .resizable()
                                             .scaledToFill()
                                             .frame(width: 180, height: 160)
@@ -35,13 +103,13 @@ struct BeautyAccessoriesView: View {
                                             .clipped()
                                             .overlay(
                                                 RoundedRectangle(cornerRadius: 12)
-                                                    .stroke(Color(.systemGray4), lineWidth: 1)
+                                                    .stroke(Color.white, lineWidth: 1)
                                             )
                                             .cornerRadius(12)
                                             .shadow(color: Color.black.opacity(0.08), radius: 6, x: 0, y: 4)
                                     } else {
                                         Rectangle()
-                                            .fill(Color.gray.opacity(0.2))
+                                            .fill(Theme.beige.opacity(0.2))
                                             .frame(width: 180, height: 160)
                                             .frame(maxWidth: .infinity)
                                             .cornerRadius(12)
@@ -54,103 +122,40 @@ struct BeautyAccessoriesView: View {
                                 }
                                 HStack(alignment: .top) {
                                     VStack(alignment: .leading, spacing: 4) {
-                                        Text("Name: \(product.name)")
+                                        Text("Name: \(listing.name)")
                                             .font(.subheadline)
-                                            .foregroundColor(.primary)
-                                        Text("Price: \(product.price, specifier: "%.0f") frw")
+                                            .foregroundColor(Theme.text)
+                                        Text("Price: \(listing.price, specifier: "%.0f") frw")
                                             .font(.footnote)
-                                            .foregroundColor(.secondary)
-                                        Text("Location: Kigali")
+                                            .foregroundColor(Theme.text.opacity(0.7))
+                                        Text("Location: \(listing.location)")
                                             .font(.footnote)
-                                            .foregroundColor(.secondary)
+                                            .foregroundColor(Theme.text.opacity(0.7))
                                     }
                                     Spacer()
                                     HStack(spacing: 10) {
                                         Image(systemName: "bag")
                                             .font(.title3)
-                                            .foregroundColor(.primary)
-                                        NavigationLink(destination: ProductDetailView(product: product)) {
+                                            .foregroundColor(Theme.button)
+                                        NavigationLink(destination: PaymentView(product: placeholderProduct)) {
                                             Image(systemName: "bag.badge.plus")
                                                 .font(.title3)
-                                                .foregroundColor(.primary)
+                                                .foregroundColor(Theme.button)
                                         }
                                     }
                                 }
                                 .padding(12)
                                 .frame(height: 90, alignment: .top)
-                                .background(Color(.systemGray6))
+                                .background(Theme.beige)
                                 .cornerRadius(12)
                             }
                             .frame(maxWidth: .infinity, alignment: .topLeading)
                             .frame(height: 270, alignment: .top)
                         }
                     }
-                    .padding()
-                    ForEach(store.beautyListings) { listing in
-                        let placeholderProduct = productFromListing(listing)
-                        VStack(alignment: .leading, spacing: 10) {
-                            NavigationLink(destination: ProductDetailView(product: placeholderProduct)) {
-                                if !placeholderProduct.imageName.isEmpty {
-                                    Image(placeholderProduct.imageName)
-                                        .resizable()
-                                        .scaledToFill()
-                                        .frame(width: 180, height: 160)
-                                        .frame(maxWidth: .infinity)
-                                        .clipped()
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 12)
-                                                .stroke(Color(.systemGray4), lineWidth: 1)
-                                        )
-                                        .cornerRadius(12)
-                                        .shadow(color: Color.black.opacity(0.08), radius: 6, x: 0, y: 4)
-                                } else {
-                                    Rectangle()
-                                        .fill(Color.gray.opacity(0.2))
-                                        .frame(width: 180, height: 160)
-                                        .frame(maxWidth: .infinity)
-                                        .cornerRadius(12)
-                                        .overlay(
-                                            Image(systemName: "photo")
-                                                .font(.largeTitle)
-                                                .foregroundColor(.gray)
-                                        )
-                                }
-                            }
-                            HStack(alignment: .top) {
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text("Name: \(listing.name)")
-                                        .font(.subheadline)
-                                        .foregroundColor(.primary)
-                                    Text("Price: \(listing.price, specifier: "%.0f") frw")
-                                        .font(.footnote)
-                                        .foregroundColor(.secondary)
-                                    Text("Location: \(listing.location)")
-                                        .font(.footnote)
-                                        .foregroundColor(.secondary)
-                                }
-                                Spacer()
-                                HStack(spacing: 10) {
-                                    Image(systemName: "bag")
-                                        .font(.title3)
-                                        .foregroundColor(.primary)
-                                    NavigationLink(destination: PaymentView(product: placeholderProduct)) {
-                                        Image(systemName: "bag.badge.plus")
-                                            .font(.title3)
-                                            .foregroundColor(.primary)
-                                    }
-                                }
-                            }
-                            .padding(12)
-                            .frame(height: 90, alignment: .top)
-                            .background(Color(.systemGray6))
-                            .cornerRadius(12)
-                        }
-                        .frame(maxWidth: .infinity, alignment: .topLeading)
-                        .frame(height: 270, alignment: .top)
-                    }
                 }
+    //            .navigationTitle("Interior Designs")
             }
-//            .navigationTitle("Interior Designs")
         }
     }
     
@@ -159,35 +164,40 @@ struct BeautyAccessoriesView: View {
         let product: Product
         
         var body: some View {
-            VStack(spacing: 20) {
-                Image(product.imageName)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 200, height: 200)
-                    .cornerRadius(12)
-                Text(product.name)
-                    .font(.largeTitle)
-                    .bold()
-                Text(product.description)
-                    .font(.title3)
-                    .foregroundColor(.gray)
-                Text("\(product.price, specifier: "%.2f") RWF")
-                    .font(.title2)
-                    .foregroundColor(.green)
-                Spacer()
-                NavigationLink(destination: PaymentView(product: product)) {
-                    Text("Proceed to Payment")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(Color.blue)
-                        .cornerRadius(10)
-                        .padding(.horizontal)
+            ZStack {
+                Theme.background
+                    .ignoresSafeArea()
+                VStack(spacing: 20) {
+                    Image(product.imageName)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 200, height: 200)
+                        .cornerRadius(12)
+                    Text(product.name)
+                        .font(.largeTitle)
+                        .bold()
+                        .foregroundColor(Theme.text)
+                    Text(product.description)
+                        .font(.title3)
+                        .foregroundColor(Theme.text.opacity(0.7))
+                    Text("\(product.price, specifier: "%.2f") RWF")
+                        .font(.title2)
+                        .foregroundColor(Theme.button)
+                    Spacer()
+                    NavigationLink(destination: PaymentView(product: product)) {
+                        Text("Proceed to Payment")
+                            .font(.headline)
+                            .foregroundColor(Theme.buttonText)
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                            .background(Theme.button)
+                            .cornerRadius(10)
+                            .padding(.horizontal)
+                    }
                 }
+                .padding()
+                .navigationTitle(product.name)
             }
-            .padding()
-            .navigationTitle(product.name)
         }
     }
     struct PaymentView: View {
@@ -198,61 +208,66 @@ struct BeautyAccessoriesView: View {
         @State private var selectedPaymentMethod: PaymentMethod? = nil
         
         var body: some View {
-            VStack(spacing: 20) {
-                Text("Payment for \(product.name)")
-                    .font(.largeTitle)
-                    .bold()
-                Image(product.imageName)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 150, height: 150)
-                    .cornerRadius(10)
-                Text("Price: \(product.price, specifier: "%.2f") RWF")
-                    .font(.title2)
-                    .foregroundColor(.green)
-                if let message = paymentStatusMessage {
-                    Text(message)
-                        .font(.subheadline)
-                        .foregroundColor(.gray)
-                }
-                Button(action: { isShowingPaymentOptions = true }) {
-                    Text("Pay Now")
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(Color.blue)
+            ZStack {
+                Theme.background
+                    .ignoresSafeArea()
+                VStack(spacing: 20) {
+                    Text("Payment for \(product.name)")
+                        .font(.largeTitle)
+                        .bold()
+                        .foregroundColor(Theme.text)
+                    Image(product.imageName)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 150, height: 150)
                         .cornerRadius(10)
-                        .padding(.horizontal)
-                }
-                .confirmationDialog("Choose Payment Method", isPresented: $isShowingPaymentOptions, titleVisibility: .visible) {
-                    Button("MTN Mobile Money") { selectedPaymentMethod = .mtn }
-                    Button("Airtel Mobile Money") { selectedPaymentMethod = .airtel }
-                    Button("PayPal") { selectedPaymentMethod = .paypal }
-                    Button("Cancel", role: .cancel) { }
-                } message: {
-                    Text("Select how you would like to pay.")
-                }
-                .sheet(item: $selectedPaymentMethod) { method in
-                    switch method {
-                    case .mtn:
-                        MobileMoneyFormView(product: product, providerName: method.rawValue) { details in
-                            paymentStatusMessage = "Processing \(method.rawValue) for \(product.name) — \(details.summary)"
-                        }
-                    case .airtel:
-                        MobileMoneyFormView(product: product, providerName: method.rawValue) { details in
-                            paymentStatusMessage = "Processing \(method.rawValue) for \(product.name) — \(details.summary)"
-                        }
-                    case .paypal:
-                        PayPalFormView(product: product) { email in
-                            paymentStatusMessage = "Redirecting to PayPal for \(product.name) — Account: \(email)"
+                    Text("Price: \(product.price, specifier: "%.2f") RWF")
+                        .font(.title2)
+                        .foregroundColor(Theme.button)
+                    if let message = paymentStatusMessage {
+                        Text(message)
+                            .font(.subheadline)
+                            .foregroundColor(Theme.text.opacity(0.7))
+                    }
+                    Button(action: { isShowingPaymentOptions = true }) {
+                        Text("Pay Now")
+                            .font(.headline)
+                            .foregroundColor(Theme.buttonText)
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                            .background(Theme.button)
+                            .cornerRadius(10)
+                            .padding(.horizontal)
+                    }
+                    .confirmationDialog("Choose Payment Method", isPresented: $isShowingPaymentOptions, titleVisibility: .visible) {
+                        Button("MTN Mobile Money") { selectedPaymentMethod = .mtn }
+                        Button("Airtel Mobile Money") { selectedPaymentMethod = .airtel }
+                        Button("PayPal") { selectedPaymentMethod = .paypal }
+                        Button("Cancel", role: .cancel) { }
+                    } message: {
+                        Text("Select how you would like to pay.")
+                    }
+                    .sheet(item: $selectedPaymentMethod) { method in
+                        switch method {
+                        case .mtn:
+                            MobileMoneyFormView(product: product, providerName: method.rawValue) { details in
+                                paymentStatusMessage = "Processing \(method.rawValue) for \(product.name) — \(details.summary)"
+                            }
+                        case .airtel:
+                            MobileMoneyFormView(product: product, providerName: method.rawValue) { details in
+                                paymentStatusMessage = "Processing \(method.rawValue) for \(product.name) — \(details.summary)"
+                            }
+                        case .paypal:
+                            PayPalFormView(product: product) { email in
+                                paymentStatusMessage = "Redirecting to PayPal for \(product.name) — Account: \(email)"
+                            }
                         }
                     }
+                    Spacer()
                 }
-                Spacer()
+                .padding()
+                .navigationTitle("Payment")
             }
-            .padding()
-            .navigationTitle("Payment")
         }
         
         private func startPayment(using method: String) { paymentStatusMessage = "Processing \(method) for \(product.name)..." }

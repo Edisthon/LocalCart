@@ -4,40 +4,45 @@ struct WelcomeView: View {
     @AppStorage("username") var username: String = "User"
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
-            Text("Welcome back, \(username) 👋")
-                .font(.largeTitle)
-                .bold()
+        ZStack {
+            Theme.background
+                .ignoresSafeArea()
+            VStack(alignment: .leading, spacing: 20) {
+                Text("Welcome back, \(username) 👋")
+                    .font(.largeTitle)
+                    .bold()
+                    .foregroundColor(Theme.text)
 
-            Text("Welcome to your feed! We have curated unique, locally made products tailored to your needs. What do you want to do today?")
-                .font(.body)
-                .foregroundColor(.gray)
+                Text("Welcome to your feed! We have curated unique, locally made products tailored to your needs. What do you want to do today?")
+                    .font(.body)
+                    .foregroundColor(Theme.text.opacity(0.7))
 
-            Spacer()
+                Spacer()
 
-            VStack(spacing: 16) {
-                NavigationLink(destination: ShopView()) {
-                    Text("🛒 I want to shop")
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.green)
-                        .cornerRadius(10)
+                VStack(spacing: 16) {
+                    NavigationLink(destination: ShopView()) {
+                        Text("🛒 I want to shop")
+                            .foregroundColor(Theme.buttonText)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Theme.button)
+                            .cornerRadius(10)
+                    }
+
+                    NavigationLink(destination: SellTermsView()) {
+                        Text("🧺 I want to sell")
+                            .foregroundColor(Theme.buttonText)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Theme.button)
+                            .cornerRadius(10)
+                    }
                 }
 
-                NavigationLink(destination: SellTermsView()) {
-                    Text("🧺 I want to sell")
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(Color.orange)
-                        .cornerRadius(10)
-                }
+                Spacer()
             }
-
-            Spacer()
+            .padding()
         }
-        .padding()
     }
 }
 struct WelcomeView_Previews: PreviewProvider {
