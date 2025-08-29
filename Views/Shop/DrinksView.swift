@@ -99,70 +99,71 @@ struct DrinksView: View {
                                 .frame(maxWidth: .infinity, alignment: .topLeading)
                                 .frame(height: 270, alignment: .top)
                             }
-                        }
-                        .padding()
-                        ForEach(store.drinksListings) { listing in
-                            let placeholderProduct = productFromListing(listing)
-                            VStack(alignment: .leading, spacing: 10) {
-                                NavigationLink(destination: ProductDetailView(product: placeholderProduct)) {
-                                    if !placeholderProduct.imageName.isEmpty {
-                                        Image(placeholderProduct.imageName)
-                                            .resizable()
-                                            .scaledToFill()
-                                            .frame(width: 180, height: 160)
-                                            .frame(maxWidth: .infinity)
-                                            .clipped()
-                                            .overlay(
-                                                RoundedRectangle(cornerRadius: 12)
-                                                    .stroke(Color.white, lineWidth: 1)
-                                            )
-                                            .cornerRadius(12)
-                                            .shadow(color: Color.black.opacity(0.08), radius: 6, x: 0, y: 4)
-                                    } else {
-                                        Rectangle()
-                                            .fill(Theme.beige.opacity(0.2))
-                                            .frame(width: 180, height: 160)
-                                            .frame(maxWidth: .infinity)
-                                            .cornerRadius(12)
-                                            .overlay(
-                                                Image(systemName: "photo")
-                                                    .font(.largeTitle)
-                                                    .foregroundColor(.gray)
-                                            )
-                                    }
-                                }
-                                HStack(alignment: .top) {
-                                    VStack(alignment: .leading, spacing: 4) {
-                                        Text("Name: \(listing.name)")
-                                            .font(.subheadline)
-                                            .foregroundColor(Theme.text)
-                                        Text("Price: \(listing.price, specifier: "%.0f") frw")
-                                            .font(.footnote)
-                                            .foregroundColor(Theme.text.opacity(0.7))
-                                        Text("Location: \(listing.location)")
-                                            .font(.footnote)
-                                            .foregroundColor(Theme.text.opacity(0.7))
-                                    }
-                                    Spacer()
-                                    HStack(spacing: 10) {
-                                        Image(systemName: "bag")
-                                            .font(.title3)
-                                            .foregroundColor(Theme.button)
-                                        NavigationLink(destination: PaymentView(product: placeholderProduct)) {
-                                            Image(systemName: "bag.badge.plus")
-                                                .font(.title3)
-                                                .foregroundColor(Theme.button)
+                            ForEach(store.drinksListings) { listing in
+                                let placeholderProduct = productFromListing(listing)
+                                VStack(alignment: .leading, spacing: 10) {
+                                    NavigationLink(destination: ProductDetailView(product: placeholderProduct)) {
+                                        if !placeholderProduct.imageName.isEmpty {
+                                            Image(placeholderProduct.imageName)
+                                                .resizable()
+                                                .scaledToFill()
+                                                .frame(width: 180, height: 160)
+                                                .frame(maxWidth: .infinity)
+                                                .clipped()
+                                                .overlay(
+                                                    RoundedRectangle(cornerRadius: 12)
+                                                        .stroke(Color.white, lineWidth: 1)
+                                                )
+                                                .cornerRadius(12)
+                                                .shadow(color: Color.black.opacity(0.08), radius: 6, x: 0, y: 4)
+                                        } else {
+                                            Rectangle()
+                                                .fill(Theme.beige.opacity(0.2))
+                                                .frame(width: 180, height: 160)
+                                                .frame(maxWidth: .infinity)
+                                                .cornerRadius(12)
+                                                .overlay(
+                                                    Image(systemName: "photo")
+                                                        .font(.largeTitle)
+                                                        .foregroundColor(.gray)
+                                                )
                                         }
                                     }
+                                    HStack(alignment: .top) {
+                                        VStack(alignment: .leading, spacing: 4) {
+                                            Text("Name: \(listing.name)")
+                                                .font(.subheadline)
+                                                .foregroundColor(Theme.text)
+                                            Text("Price: \(listing.price, specifier: "%.0f") frw")
+                                                .font(.footnote)
+                                                .foregroundColor(Theme.text.opacity(0.7))
+                                            Text("Location: \(listing.location)")
+                                                .font(.footnote)
+                                                .foregroundColor(Theme.text.opacity(0.7))
+                                        }
+                                        Spacer()
+                                        HStack(spacing: 10) {
+                                            Image(systemName: "bag")
+                                                .font(.title3)
+                                                .foregroundColor(Theme.button)
+                                            NavigationLink(destination: PaymentView(product: placeholderProduct)) {
+                                                Image(systemName: "bag.badge.plus")
+                                                    .font(.title3)
+                                                    .foregroundColor(Theme.button)
+                                            }
+                                        }
+                                    }
+                                    .padding(12)
+                                    .frame(height: 90, alignment: .top)
+                                    .background(Theme.beige)
+                                    .cornerRadius(12)
                                 }
-                                .padding(12)
-                                .frame(height: 90, alignment: .top)
-                                .background(Theme.beige)
-                                .cornerRadius(12)
+                                .frame(maxWidth: .infinity, alignment: .topLeading)
+                                .frame(height: 270, alignment: .top)
                             }
-                            .frame(maxWidth: .infinity, alignment: .topLeading)
-                            .frame(height: 270, alignment: .top)
                         }
+                        .padding()
+
                     }
                 }
                 .navigationTitle("Drinks")
