@@ -7,7 +7,7 @@ struct InteriorDesignsView: View {
                 price: listing.price,
                 category: "Interior Designs",
                 description: listing.description,
-                imageName: "interior_vase")
+                imageName: "")
     }
     
     var body: some View {
@@ -26,18 +26,31 @@ struct InteriorDesignsView: View {
                         ForEach(sampleProducts.filter { $0.category == "Interior Designs" }) { product in
                             VStack(alignment: .leading, spacing: 10) {
                                 NavigationLink(destination: ProductDetailView(product: product)) {
-                                    Image(product.imageName)
-                                        .resizable()
-                                        .scaledToFill()
-                                        .frame( width: 180, height: 160)
-                                        .frame(maxWidth: .infinity)
-                                        .clipped()
-                                        .overlay(
-                                            RoundedRectangle(cornerRadius: 12)
-                                                .stroke(Color(.systemGray4), lineWidth: 1)
-                                        )
-                                        .cornerRadius(12)
-                                        .shadow(color: Color.black.opacity(0.08), radius: 6, x: 0, y: 4)
+                                    if !product.imageName.isEmpty {
+                                        Image(product.imageName)
+                                            .resizable()
+                                            .scaledToFill()
+                                            .frame(width: 180, height: 160)
+                                            .frame(maxWidth: .infinity)
+                                            .clipped()
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: 12)
+                                                    .stroke(Color(.systemGray4), lineWidth: 1)
+                                            )
+                                            .cornerRadius(12)
+                                            .shadow(color: Color.black.opacity(0.08), radius: 6, x: 0, y: 4)
+                                    } else {
+                                        Rectangle()
+                                            .fill(Color.gray.opacity(0.2))
+                                            .frame(width: 180, height: 160)
+                                            .frame(maxWidth: .infinity)
+                                            .cornerRadius(12)
+                                            .overlay(
+                                                Image(systemName: "photo")
+                                                    .font(.largeTitle)
+                                                    .foregroundColor(.gray)
+                                            )
+                                    }
                                 }
                                 HStack(alignment: .top) {
                                     VStack(alignment: .leading, spacing: 4) {
@@ -73,17 +86,15 @@ struct InteriorDesignsView: View {
                         }
                     }
                     .padding()
-                }
-                if !store.interiorListings.isEmpty {
-                    LazyVGrid(columns: [GridItem(.flexible(), spacing: 16), GridItem(.flexible(), spacing: 16)], spacing: 16) {
-                        ForEach(store.interiorListings) { listing in
-                            let placeholderProduct = productFromListing(listing)
-                            VStack(alignment: .leading, spacing: 10) {
-                                NavigationLink(destination: ProductDetailView(product: placeholderProduct)) {
+                    ForEach(store.interiorListings) { listing in
+                        let placeholderProduct = productFromListing(listing)
+                        VStack(alignment: .leading, spacing: 10) {
+                            NavigationLink(destination: ProductDetailView(product: placeholderProduct)) {
+                                if !placeholderProduct.imageName.isEmpty {
                                     Image(placeholderProduct.imageName)
                                         .resizable()
                                         .scaledToFill()
-                                        .frame( width: 180, height: 160)
+                                        .frame(width: 180, height: 160)
                                         .frame(maxWidth: .infinity)
                                         .clipped()
                                         .overlay(
@@ -92,41 +103,51 @@ struct InteriorDesignsView: View {
                                         )
                                         .cornerRadius(12)
                                         .shadow(color: Color.black.opacity(0.08), radius: 6, x: 0, y: 4)
+                                } else {
+                                    Rectangle()
+                                        .fill(Color.gray.opacity(0.2))
+                                        .frame(width: 180, height: 160)
+                                        .frame(maxWidth: .infinity)
+                                        .cornerRadius(12)
+                                        .overlay(
+                                            Image(systemName: "photo")
+                                                .font(.largeTitle)
+                                                .foregroundColor(.gray)
+                                        )
                                 }
-                                HStack(alignment: .top) {
-                                    VStack(alignment: .leading, spacing: 4) {
-                                        Text("Name: \(listing.name)")
-                                            .font(.subheadline)
-                                            .foregroundColor(.primary)
-                                        Text("Price: \(listing.price, specifier: "%.0f") frw")
-                                            .font(.footnote)
-                                            .foregroundColor(.secondary)
-                                        Text("Location: \(listing.location)")
-                                            .font(.footnote)
-                                            .foregroundColor(.secondary)
-                                    }
-                                    Spacer()
-                                    HStack(spacing: 10) {
-                                        Image(systemName: "bag")
+                            }
+                            HStack(alignment: .top) {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("Name: \(listing.name)")
+                                        .font(.subheadline)
+                                        .foregroundColor(.primary)
+                                    Text("Price: \(listing.price, specifier: "%.0f") frw")
+                                        .font(.footnote)
+                                        .foregroundColor(.secondary)
+                                    Text("Location: \(listing.location)")
+                                        .font(.footnote)
+                                        .foregroundColor(.secondary)
+                                }
+                                Spacer()
+                                HStack(spacing: 10) {
+                                    Image(systemName: "bag")
+                                        .font(.title3)
+                                        .foregroundColor(.primary)
+                                    NavigationLink(destination: PaymentView(product: placeholderProduct)) {
+                                        Image(systemName: "bag.badge.plus")
                                             .font(.title3)
                                             .foregroundColor(.primary)
-                                        NavigationLink(destination: PaymentView(product: placeholderProduct)) {
-                                            Image(systemName: "bag.badge.plus")
-                                                .font(.title3)
-                                                .foregroundColor(.primary)
-                                        }
                                     }
                                 }
-                                .padding(12)
-                                .frame(height: 90, alignment: .top)
-                                .background(Color(.systemGray6))
-                                .cornerRadius(12)
                             }
-                            .frame(maxWidth: .infinity, alignment: .topLeading)
-                            .frame(height: 270, alignment: .top)
+                            .padding(12)
+                            .frame(height: 90, alignment: .top)
+                            .background(Color(.systemGray6))
+                            .cornerRadius(12)
                         }
+                        .frame(maxWidth: .infinity, alignment: .topLeading)
+                        .frame(height: 270, alignment: .top)
                     }
-                    .padding()
                 }
             }
 //            .navigationTitle("Interior Designs")
