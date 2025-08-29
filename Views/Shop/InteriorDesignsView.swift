@@ -73,18 +73,14 @@ struct InteriorDesignsView: View {
                             .font(.title2)
                             .bold()
                             .padding(.horizontal)
-                        ForEach(store.interiorListings) { listing in
-                            HStack(spacing: 12) {
-                                Rectangle().fill(Color.gray.opacity(0.2)).frame(width: 80, height: 80).cornerRadius(8)
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text(listing.name).bold()
-                                    Text(String(format: "%.0f RWF", listing.price)).foregroundColor(.green)
-                                    Text(listing.location).font(.caption).foregroundColor(.gray)
+                        LazyVGrid(columns: [GridItem(.flexible(), spacing: 16), GridItem(.flexible(), spacing: 16)], spacing: 16) {
+                            ForEach(store.interiorListings) { listing in
+                                NavigationLink(destination: ListingDetailView(listing: listing)) {
+                                    ListingCard(listing: listing, placeholderSystemImage: "lamp.table")
                                 }
-                                Spacer()
                             }
-                            .padding(.horizontal)
                         }
+                        .padding(.horizontal)
                     }
                 }
             }
