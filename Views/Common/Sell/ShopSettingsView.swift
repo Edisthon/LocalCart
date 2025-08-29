@@ -7,6 +7,11 @@ struct ShopSettingsView: View {
                 Text("Shop name")
                 Text("Bio")
             }
+            Section(header: Text("Manage Products")) {
+                NavigationLink(destination: ManageProductsView()) {
+                    Text("Delete Products")
+                }
+            }
             Section(header: Text("Notifications")) {
                 Toggle("Offers", isOn: .constant(true))
                 Toggle("Sales", isOn: .constant(true))

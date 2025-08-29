@@ -12,7 +12,7 @@ private func locationForProduct(_ product: Product) -> String {
 }
 
 struct DrinksView: View {
-    @StateObject private var store = ProductStore()
+    @EnvironmentObject var store: ProductStore
     private func productFromListing(_ listing: Listing) -> Product {
         Product(name: listing.name,
                 price: listing.price,
@@ -32,7 +32,7 @@ struct DrinksView: View {
                         .bold()
                         .padding()
                         .foregroundColor(Theme.text)
-                    
+
                     ScrollView {
                         LazyVGrid(columns: [
                             GridItem(.flexible(), spacing: 16),
@@ -162,9 +162,8 @@ struct DrinksView: View {
                                 .frame(height: 270, alignment: .top)
                             }
                         }
-                        
-                        
-                        
+                        .padding()
+
                     }
                 }
                 .navigationTitle("Drinks")
